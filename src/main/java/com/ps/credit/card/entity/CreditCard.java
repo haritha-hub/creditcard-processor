@@ -15,11 +15,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name = "credit_card_details")
+@Table(name = "credit_card")
 public class CreditCard {
 
     @Id
-    @Column(name = "cc_number", nullable = false)
+    @Column(name = "cc_number", nullable = false, updatable = false)
     private String creditCardNumber;
 
     @Column(name = "account_name", nullable = false)
