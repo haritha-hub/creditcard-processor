@@ -7,6 +7,7 @@ import com.ps.credit.card.entity.CreditCard;
 import com.ps.credit.card.repository.CreditCardRepository;
 import com.ps.credit.card.rest.dto.CreditCardDTO;
 
+import com.ps.credit.card.util.HelperUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -21,9 +22,7 @@ public class CreditCardService {
 
     public CreditCard saveCreditCardDetails(final CreditCardDTO creditCardDTO) {
 
-        var isCreditCardValid =   creditCardNumberValidation(creditCardDTO.getCardNumber().trim());
-
-        if (isCreditCardValid) {
+        if (HelperUtil.luhnCheck(creditCardDTO.getCardNumber())) {
           return creditCardRepository.save(mapToCreditCardEntity(creditCardDTO));
         }
 
@@ -58,28 +57,4 @@ public class CreditCardService {
                 .build();
     }
 
-    private boolean creditCardNumberValidation(final String creditCardNumber) {
-
-        int extraChars = creditCardNumber.length() - 10;
-
-        if (extraChars < 0) {
-            throw new IllegalArgumentException("Number length must be at least 10 characters!");
-        }
-
-        int s1 = 0, s2 = 0;
-
-        String reverse = new StringBuffer(creditCardNumber).reverse().toString();
-        for (int i = 0; i < reverse.length(); i++) {
-            int digit = Character.digit(reverse.charAt(i), 10);
-            if (i % 2 == 0) {//this is for odd digits, they are 1-indexed in the algorithm
-                s1 += digit;
-            } else {//add 2 * digit for 0-4, add 2 * digit - 9 for 5-9
-                s2 += 2 * digit;
-                if (digit >= 5) {
-                    s2 -= 9;
-                }
-            }
-        }
-        return (s1 + s2) % 10 == 0;
-    }
 }

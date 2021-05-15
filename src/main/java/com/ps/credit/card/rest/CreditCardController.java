@@ -11,6 +11,8 @@ import com.ps.credit.card.service.CreditCardService;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
+import org.springframework.http.HttpStatus;
+
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,9 +37,9 @@ public class CreditCardController {
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Successful update of credit card details"),
         @ApiResponse(code = 400, message = "Error in credit card object "),
-        @ApiResponse(code = 422, message = "Error in saving credit card details")
+        @ApiResponse(code = 412, message = "Precondition failed for credit card details")
     })
-    @PostMapping
+    @PostMapping("/add-card")
     public ResponseEntity<CreditCard> saveCardDetails(@RequestBody @Valid CreditCardDTO creditCard) {
 
        var creditCardDetails = creditCardService.saveCreditCardDetails(creditCard);
@@ -46,17 +48,18 @@ public class CreditCardController {
            return ResponseEntity.ok().body(creditCardDetails);
        }
 
-       return ResponseEntity.unprocessableEntity().build();
+       return ResponseEntity.status(HttpStatus.PRECONDITION_FAILED).build();
+
     }
 
     @ApiOperation(
-            value = "Retrieve credit card details of a customer"
+            value = "Retrieve all existing credit card details"
     )
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successful return of credit card details"),
             @ApiResponse(code = 204, message = "No content")
     })
-    @GetMapping
+    @GetMapping("/get-cards")
     public ResponseEntity<List<CreditCardDTO>> getAllCardsDetails() {
 
         var creditCardDetails = creditCardService.getAll();
