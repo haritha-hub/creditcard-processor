@@ -1,0 +1,80 @@
+plugins {
+	id 'org.springframework.boot' version '2.4.5'
+	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+	id 'com.gorylenko.gradle-git-properties' version '2.2.2'
+	id 'at.zierler.yamlvalidator' version '1.5.0'
+	id 'java'
+}
+
+apply plugin: 'io.spring.dependency-management'
+
+group = 'com.ps.credit'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+yamlValidator {
+	searchPaths = ['src/main/resources']
+	allowDuplicates = false
+	searchRecursive = false
+}
+
+defaultTasks 'bootRun'
+
+configurations {
+	provideRuntime
+}
+
+repositories {
+	mavenCentral()
+}
+
+springBoot {
+	buildInfo()
+}
+
+dependencies {
+	// spring boot
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+
+	// flyway database migration
+	implementation 'org.flywaydb:flyway-core'
+
+	// swagger
+	implementation 'io.springfox:springfox-swagger2:2.9.2'
+	implementation 'io.springfox:springfox-swagger-ui:2.9.2'
+
+	compileOnly 'org.projectlombok:lombok'
+	runtimeOnly 'com.h2database:h2'
+	annotationProcessor 'org.projectlombok:lombok'
+
+	testCompile 'org.springframework.boot:spring-boot-starter-test'
+
+	testImplementation 'com.github.tomakehurst:wiremock-standalone:2.26.1'
+	testImplementation 'org.junit.jupiter:junit-jupiter-api:5.3.1'
+	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.3.1'
+	testImplementation 'org.mockito:mockito-junit-jupiter:2.28.2'
+	testCompile 'org.mockito:mockito-core:2.28.2'
+}
+
+test {
+	useJUnitPlatform()
+}
+
+compileTestJava {
+	options.compilerArgs = [
+	        "-Xlint:deprecation"
+	]
+}
+
+bootJar {
+	launchScript()
+	dependsOn test
+}
