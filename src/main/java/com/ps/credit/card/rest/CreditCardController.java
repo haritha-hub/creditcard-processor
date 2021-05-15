@@ -5,6 +5,7 @@ import java.util.List;
 import com.ps.credit.card.entity.CreditCard;
 import com.ps.credit.card.service.CreditCardService;
 
+import com.ps.credit.card.util.HelperUtil;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,33 +27,30 @@ public class CreditCardController {
     @ApiOperation(
             value = "Add credit card details of a customer"
     )
-    @PostMapping
+    @PostMapping("/addCard")
     public ResponseEntity saveCardDetails(@RequestBody CreditCard creditCard) {
-
+        log.debug("Entering POST /addCard endpoint");
         try {
-            boolean isCreditCardValid = check(creditCard.getCreditCardNumber());
-            if (isCreditCardValid) {
+            if (HelperUtil.luhnCheck(creditCard.getCreditCardNumber()) && HelperUtil.validateCardDetails(creditCard.getCreditCardNumber())) {
                 creditCardService.saveDetails(creditCard);
                 log.debug("Inserted credit card details successfully");
-                return new ResponseEntity<>(HttpStatus.CREATED);
+                return new ResponseEntity<>(HttpStatus.OK);
             }
             return new ResponseEntity<>(null, HttpStatus.PRECONDITION_FAILED);
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @ApiOperation(
-            value = "Retrieve credit card details of a customer"
+            value = "Retrieve all existing credit card details"
     )
     @GetMapping("/getCards")
     public ResponseEntity<List<CreditCard>> getAllCardsDetails() {
-
+        log.debug("Entering GET /getCards endpoint");
         try {
             List<CreditCard> creditCardList = creditCardService.getAll();
-
-            if(creditCardList.isEmpty()){
+            if (creditCardList.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
             return new ResponseEntity<>(creditCardList, HttpStatus.OK);
@@ -60,28 +58,4 @@ public class CreditCardController {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
-    private boolean check(String creditCardNumber) {
-        log.debug("Starting Validation of given credit card number", creditCardNumber);
-        // this only works if you are certain all input will be at least 10 characters
-        int extraChars = creditCardNumber.length() - 10;
-        if (extraChars < 0) {
-            throw new IllegalArgumentException("Number length must be at least 10 characters!");
-        }
-        int s1 = 0, s2 = 0;
-        String reverse = new StringBuffer(creditCardNumber).reverse().toString();
-        for (int i = 0; i < reverse.length(); i++) {
-            int digit = Character.digit(reverse.charAt(i), 10);
-            if (i % 2 == 0) {//this is for odd digits, they are 1-indexed in the algorithm
-                s1 += digit;
-            } else {//add 2 * digit for 0-4, add 2 * digit - 9 for 5-9
-                s2 += 2 * digit;
-                if (digit >= 5) {
-                    s2 -= 9;
-                }
-            }
-        }
-        return (s1 + s2) % 10 == 0;
-    }
-
 }
