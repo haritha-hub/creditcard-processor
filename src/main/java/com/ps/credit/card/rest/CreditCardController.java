@@ -12,19 +12,21 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
 import org.springframework.http.HttpStatus;
-
-import org.springframework.http.ResponseEntity;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.util.CollectionUtils;
 
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-@RestController("/api/credit-card")
+@RestController
+@RequestMapping("/api/credit-card")
 @RequiredArgsConstructor
 @Slf4j
 public class CreditCardController {
@@ -67,7 +69,6 @@ public class CreditCardController {
         return CollectionUtils.isEmpty(creditCardDetails) ?
                 ResponseEntity.noContent().build() :
                 ResponseEntity.ok().body(creditCardDetails);
-
     }
 
 }
