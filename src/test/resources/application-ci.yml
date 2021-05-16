@@ -1,0 +1,14 @@
+# ===================================
+# Configuration
+# ===================================
+
+spring:
+
+  datasource:
+    url: jdbc:h2:file:~/creditcard-processor-ci
+    username: ci
+    password: ci
+
+
+
+
