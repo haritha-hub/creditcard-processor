@@ -3,16 +3,16 @@
 The CreditCard Processor is a micro-service that allows to add new or view existing credit card accounts.
 
 # Technology Stack
-Java 11
-Spring Boot 2.4.5 Release
-Gradle Wrapper and Dependencies
-Lombok Plugin
-H2 Database Runtime (Memory)
-Spring BOOT JPA
-SpringFox Swagger
-SpringFox UI
-Junit Mockito
-Flyway
+•	Java 11
+•	Spring Boot 2.4.5 Release
+•	Gradle Wrapper and Dependencies
+•	Lombok Plugin
+•	H2 Database Runtime (Memory)
+•	Spring BOOT JPA
+•	SpringFox Swagger
+•	SpringFox UI
+•	Junit Mockito
+•	Flyway
 
 ## Starting the application
 
